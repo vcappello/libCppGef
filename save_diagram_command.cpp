@@ -1,0 +1,58 @@
+#include "save_diagram_command.h"
+
+#include <fstream>
+#include <glibmm/i18n.h>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
+namespace cppgef
+{
+
+SaveDiagramCommand::SaveDiagramCommand(shared_ptr< Diagram > diagram, const std::string& file_name) :
+	diagram_( diagram ),
+	file_name_( file_name )
+{
+}
+
+SaveDiagramCommand::~SaveDiagramCommand()
+{
+}
+
+shared_ptr< Diagram > SaveDiagramCommand::getDiagram()
+{
+	return diagram_;
+}
+
+bool SaveDiagramCommand::allowUndo() const
+{
+	return false;
+}
+
+bool SaveDiagramCommand::execute()
+{
+	std::ofstream ofs(file_name_.c_str());
+	
+	if (ofs.good())
+	{
+		boost::archive::text_oarchive oa(ofs);
+		oa << *diagram_;
+		
+		return true;
+	}
+	else
+	{
+		throw Error(
+			Glib::ustring::compose(_("Fail to access file '%1'"), file_name_));
+	}
+	
+	return false;
+}
+
+bool SaveDiagramCommand::unexecute()
+{
+	return false;
+}
+
+}
+
