@@ -3,6 +3,8 @@
 #include <fstream>
 #include <glibmm/i18n.h>
 
+#include <command_manager.h>
+
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
@@ -38,6 +40,8 @@ bool SaveDiagramCommand::execute()
 		boost::archive::text_oarchive oa(ofs);
 		oa << *diagram_;
 		
+		CommandManager::getInstance()->setSaveBookmark (diagram_);
+
 		return true;
 	}
 	else

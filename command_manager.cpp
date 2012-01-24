@@ -79,6 +79,10 @@ bool CommandManager::undo(shared_ptr< Diagram > diagram)
 	
 	signal_command_undo_.emit (diagram);
 
+	// Check if we reach the saved state
+	if (isReachedSavedState (diagram))
+		signal_saved_state_.emit (diagram);
+
 	return result;
 }
 
@@ -96,6 +100,10 @@ bool CommandManager::redo(shared_ptr< Diagram > diagram)
 
 	signal_command_redo_.emit (diagram);
 	
+	// Check if we reach the saved state
+	if (isReachedSavedState (diagram))
+		signal_saved_state_.emit (diagram);
+
 	return result;
 }	
 
@@ -119,6 +127,24 @@ void CommandManager::closeStack(shared_ptr< Diagram > diagram)
 {
 	undo_stack_.erase (diagram);
 	redo_stack_.erase (diagram);
+	save_bookmarks_.erase (diagram);
+}
+
+void CommandManager::setSaveBookmark(shared_ptr< Diagram > diagram)
+{
+	if (!undo_stack_[diagram]->empty())
+	{
+		save_bookmarks_[diagram] = undo_stack_[diagram]->top();
+	}
+	else
+	{
+		if (save_bookmarks_.find (diagram) != save_bookmarks_.end())
+		{
+			save_bookmarks_.erase (diagram);
+		}
+	}
+
+	signal_saved_state_.emit (diagram);
 }
 
 CommandManager::signal_command_execute_t CommandManager::signalCommandExecute()
@@ -134,6 +160,27 @@ CommandManager::signal_command_undo_t CommandManager::signalCommandUndo()
 CommandManager::signal_command_redo_t CommandManager::signalCommandRedo()
 {
 	return signal_command_redo_;
+}
+
+CommandManager::signal_saved_state_t CommandManager::signalReachedSavedState()
+{
+	return signal_saved_state_;
+}
+
+bool CommandManager::isReachedSavedState(shared_ptr< Diagram > diagram)
+{
+	if (save_bookmarks_.find (diagram) != save_bookmarks_.end())
+	{
+		if (!undo_stack_[diagram]->empty() && save_bookmarks_[diagram] == undo_stack_[diagram]->top())
+			return true;
+	}
+	else
+	{
+		if (undo_stack_[diagram]->empty())
+			return true;
+	}
+
+	return false;
 }
 
 }

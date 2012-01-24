@@ -39,6 +39,7 @@ public:
 	typedef sigc::signal< void, shared_ptr< Diagram > > signal_command_execute_t;
 	typedef sigc::signal< void, shared_ptr< Diagram > > signal_command_undo_t;
 	typedef sigc::signal< void, shared_ptr< Diagram > > signal_command_redo_t;
+	typedef sigc::signal< void, shared_ptr< Diagram > > signal_saved_state_t;
 
 private:
 	static CommandManager* instance_;
@@ -60,6 +61,7 @@ public:
 	 * 
 	 * If the command allow undo, after execution it was pushed
 	 * in the undo stack. If the redo stack is not empty it was cleared.
+	 * Emits the signalCommandExecute() signal
 	 * 
 	 * @param cmd the command to execute
 	 * @return command result
@@ -77,7 +79,8 @@ public:
 	 * @brief Undo last command
 	 * 
 	 * Pop last command from the undo stack and unexecute it,
-	 * after push the command in the redo stack
+	 * after push the command in the redo stack.
+	 * Emits the signalCommandUndo() signal
 	 * 
 	 * @param diagram the diagram to use
 	 * @return command result
@@ -89,6 +92,7 @@ public:
 	 * 
 	 * Pop last command from redo stack and execute it,
 	 * after push the command in the undo stack
+	 * Emits the signalCommandRedo() signal
 	 * 
 	 * @param diagram the diagram to use
 	 * @return command result
@@ -121,23 +125,37 @@ public:
 	 */
 	void closeStack(shared_ptr< Diagram > diagram);
 
+	/**
+	 * @brief Set the saved state for given diagram
+	 *
+	 * After calling undo or redo when the save bookmark is reached
+	 * the signal signalSavedState() was emitted.
+	 * The call to setSaveBookmark emits the signalSavedState() signal.
+	 *
+	 * @param diagram the diagram to use
+	 */
+	void setSaveBookmark(shared_ptr< Diagram > diagram);
+
+	bool isReachedSavedState(shared_ptr< Diagram > diagram);
+
 	signal_command_execute_t signalCommandExecute();
 	signal_command_undo_t signalCommandUndo();
 	signal_command_redo_t signalCommandRedo();
-
+	signal_saved_state_t signalReachedSavedState();
 	
 private:
 	std::map< shared_ptr< Diagram >, shared_ptr< cmd_stack_t > > undo_stack_;
 	std::map< shared_ptr< Diagram >, shared_ptr< cmd_stack_t > > redo_stack_;
+	std::map< shared_ptr< Diagram >, shared_ptr< ICommand > > save_bookmarks_;
 	
 	signal_command_execute_t signal_command_execute_;
 	signal_command_undo_t signal_command_undo_;
 	signal_command_redo_t signal_command_redo_;
+	signal_saved_state_t signal_saved_state_;
 
 private:
 	CommandManager();
 	virtual ~CommandManager();
-
 };
 
 }
