@@ -143,6 +143,16 @@ public:
 	 * @return true if at least one object was found
 	 */
 	bool selectFromRectangle(const Rectangle& rectangle);
+
+	/**
+	 * @brief Remove all objects from selection
+	 */
+	virtual void clearSelection();
+
+	/**
+	 * @brief Select all children
+	 */
+	virtual void selectAll();
 	
 	/**
 	 * @brief Can not move a diagram
@@ -154,11 +164,6 @@ public:
 	void paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context);
 	
 	virtual shared_ptr< IInplaceEditor > queryInplaceEditor(const Point& point);
-	
-	/**
-	 * @brief Remove all objects from selection
-	 */
-	virtual void clearSelection();
 	
 	virtual shared_ptr< IEditPart > getChildAt(int index);
 	

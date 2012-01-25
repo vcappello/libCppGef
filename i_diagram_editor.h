@@ -24,6 +24,7 @@ public:
 	virtual void stopInplaceEditing() = 0;
 	
 	virtual void clearSelection() = 0;
+	virtual void selectAll() = 0;
 };
 
 }

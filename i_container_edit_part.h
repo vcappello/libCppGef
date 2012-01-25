@@ -28,6 +28,7 @@ public:
 	virtual shared_ptr< Figure > getClientFigure() = 0;
 
 	virtual void clearSelection() = 0;
+	virtual void selectAll() = 0;
 	
 	virtual shared_ptr< IEditPart > getChildAt(int index) = 0;
 	

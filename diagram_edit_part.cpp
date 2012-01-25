@@ -454,6 +454,21 @@ void DiagramEditPart::clearSelection()
 	}
 }
 
+void DiagramEditPart::selectAll()
+{
+	for (iterator itor = children_.begin();
+		itor != children_.end();
+		itor++)
+	{
+		(*itor)->setSelected (true);
+
+		// If the child is a container invoke selectAll()
+		shared_ptr< IContainerEditPart > container = dynamic_pointer_cast< IContainerEditPart >( *itor );
+		if (container)
+			container->selectAll();
+	}
+}
+
 shared_ptr< IEditPart > DiagramEditPart::getChildAt(int index)
 {
 	return children_.at (index);

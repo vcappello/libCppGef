@@ -86,6 +86,11 @@ public:
 	
 	virtual void clearSelection();
 	
+	/**
+	 * @brief Select all children
+	 */
+	virtual void selectAll();
+
 	virtual shared_ptr< IEditPart > getChildAt(int index);
 	
 	virtual iterator getChildrenBegin();
