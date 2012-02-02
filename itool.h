@@ -24,9 +24,45 @@ public:
 	virtual shared_ptr< DiagramEditPart > getDiagramEditPart() = 0;
 	virtual void setDiagramEditPart(shared_ptr< DiagramEditPart > value) = 0;
 	
+	/**
+	 *
+	 * @param event
+	 * @param diagram_editor
+	 * @return true if need to redraw the diagram
+	 */
 	virtual bool buttonPress(GdkEventButton* event, IDiagramEditor* diagram_editor) = 0;
+
+	/**
+	 *
+	 * @param event
+	 * @param diagram_editor
+	 * @return true if need to redraw the diagram
+	 */
 	virtual bool buttonRelease(GdkEventButton* event, IDiagramEditor* diagram_editor) = 0;
+
+	/**
+	 *
+	 * @param event
+	 * @param diagram_editor
+	 * @return true if need to redraw the diagram
+	 */
 	virtual bool motionNotify(GdkEventMotion* event, IDiagramEditor* diagram_editor) = 0;
+
+	/**
+	 *
+	 * @param event
+	 * @param diagram_editor
+	 * @return true if need to redraw the diagram
+	 */
+	virtual bool keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor) = 0;
+
+	/**
+	 *
+	 * @param event
+	 * @param diagram_editor
+	 * @return true if need to redraw the diagram
+	 */
+	virtual bool keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor) = 0;
 	
 #ifdef GTKMM_3
 	virtual bool draw(Cairo::RefPtr< Cairo::Context > context) = 0;

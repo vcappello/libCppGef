@@ -29,6 +29,9 @@ public:
 	virtual bool buttonRelease(GdkEventButton* event, IDiagramEditor* diagram_editor);
 	virtual bool motionNotify(GdkEventMotion* event, IDiagramEditor* diagram_editor);
 
+	virtual bool keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor);
+	virtual bool keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor);
+
 #ifdef GTKMM_3
 	virtual bool draw(Cairo::RefPtr< Cairo::Context > context);
 #else

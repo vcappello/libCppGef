@@ -114,6 +114,24 @@ bool InsertElementTool::motionNotify(GdkEventMotion* event, IDiagramEditor* diag
 	return true;
 }
 
+bool InsertElementTool::keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	return false;
+}
+
+bool InsertElementTool::keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	if (event->keyval == GDK_KEY_Escape)
+	{
+		edit_part_.reset();
+		signal_action_cancel_.emit();
+
+		return true;
+	}
+
+	return false;
+}
+
 #ifdef GTKMM_3
 bool InsertElementTool::draw(Cairo::RefPtr< Cairo::Context > context)
 {

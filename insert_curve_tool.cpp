@@ -200,6 +200,25 @@ bool InsertCurveTool::motionNotify(GdkEventMotion* event, IDiagramEditor* diagra
 	return true;
 }
 
+bool InsertCurveTool::keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	return false;
+}
+
+bool InsertCurveTool::keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	if (event->keyval == GDK_KEY_Escape)
+	{
+		edit_part_.reset();
+		insert_state_ = IS_SET_START_POINT;
+		signal_action_cancel_.emit();
+
+		return true;
+	}
+
+	return false;
+}
+
 #ifdef GTKMM_3
 bool InsertCurveTool::draw(Cairo::RefPtr< Cairo::Context > context)
 #else

@@ -84,11 +84,29 @@ bool SelectionTool::buttonRelease(GdkEventButton* event, IDiagramEditor* diagram
 			
 			drag_tracker_->dragComplete (point);
 			
-			drag_tracker_ = shared_ptr< IDragTracker >();
+			drag_tracker_.reset();
 		}
 	}
 	
 	return true;
+}
+
+bool SelectionTool::keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	return false;
+}
+
+bool SelectionTool::keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor)
+{
+	if (event->keyval == GDK_KEY_Escape)
+	{
+		drag_tracker_.reset();
+		signal_action_cancel_.emit();
+
+		return true;
+	}
+
+	return false;
 }
 
 #ifdef GTKMM_3
