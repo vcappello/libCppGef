@@ -498,17 +498,41 @@ bool DiagramEditPart::selectFromRectangle(const Rectangle& rectangle)
 	return res;
 }
 
+bool DiagramEditPart::toggleSelectionFromPoint(const Point& point)
+{
+	for (reverse_iterator itor = children_.rbegin();
+		itor != children_.rend();
+		itor++)
+	{
+		if ((*itor)->toggleSelectionFromPoint (point))
+			return true;
+	}
+
+	return false;
+}
+
+bool DiagramEditPart::toggleSelectionFromRectangle(const Rectangle& rectangle)
+{
+	bool res = false;
+	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, children_)
+	{
+		res |= edit_part->toggleSelectionFromRectangle (rectangle);
+	}
+
+	return res;
+}
+
 bool DiagramEditPart::queryStartMove(const Point& point)
 {
 	return false;
 }
 
-shared_ptr< IDragTracker > DiagramEditPart::queryDragTracker(const Point& point)
+shared_ptr< IDragTracker > DiagramEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
 	// 1. point is on a selected child drag tacker
 	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, selected_children_)
 	{
-		shared_ptr< IDragTracker > drag_tracker = edit_part->queryDragTracker (point);
+		shared_ptr< IDragTracker > drag_tracker = edit_part->queryDragTracker (point, key_modifier);
 		
 		if (drag_tracker)
 		{
@@ -516,33 +540,65 @@ shared_ptr< IDragTracker > DiagramEditPart::queryDragTracker(const Point& point)
 		}
 	}
 	
-	// 2. point is on a selected child: start move
-	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, selected_children_)
+	// 2. point is on a selected child
+	if (key_modifier.isShift())
 	{
-		if (edit_part->queryStartMove (point))
+		// Toggle selection
+		for (reverse_iterator itor = children_.rbegin();
+			itor != children_.rend();
+			itor++)
 		{
-			return shared_ptr< IDragTracker >(new MoveDragTracker( shared_from_this(), edit_part ));
+			if ((*itor)->toggleSelectionFromPoint (point))
+				return shared_ptr< IDragTracker >();
+		}
+	}
+	else
+	{
+		// Start move
+		BOOST_FOREACH(shared_ptr< IEditPart > edit_part, selected_children_)
+		{
+			if (edit_part->queryStartMove (point))
+			{
+				return shared_ptr< IDragTracker >(new MoveDragTracker( shared_from_this(), edit_part ));
+			}
 		}
 	}
 	
-	// 3. point is on a not selected child: select child - start move
-	for (reverse_iterator itor = children_.rbegin();
-		itor != children_.rend();
-		itor++)	
+	// 3. point is on a not selected child:
+	if (key_modifier.isShift())
 	{
-		if ((*itor)->queryStartMove (point))
+		// Toggle selection
+		for (reverse_iterator itor = children_.rbegin();
+			itor != children_.rend();
+			itor++)
 		{
-			clearSelection();
-			
-			// Use selectFromPoint because the selected item can be a child of a child
-			(*itor)->selectFromPoint (point);
-			
-			return shared_ptr< IDragTracker >(new MoveDragTracker( shared_from_this(), *(selected_children_.begin()) ));
+			if ((*itor)->toggleSelectionFromPoint (point))
+				return shared_ptr< IDragTracker >();
+		}
+	}
+	else
+	{
+		// Select child and start move
+		for (reverse_iterator itor = children_.rbegin();
+			itor != children_.rend();
+			itor++)
+		{
+			if ((*itor)->queryStartMove (point))
+			{
+				clearSelection();
+
+				// Use selectFromPoint because the selected item can be a child of a child
+				(*itor)->selectFromPoint (point);
+
+				return shared_ptr< IDragTracker >(new MoveDragTracker( shared_from_this(), *(selected_children_.begin()) ));
+			}
 		}
 	}
 	
 	// 4. else start new selection
-	return shared_ptr< IDragTracker >(new SelectionDragTracker( shared_from_this() ));
+	return shared_ptr< IDragTracker >(new SelectionDragTracker(
+			shared_from_this(),
+			key_modifier.isShift() ? SelectionDragTracker::AddToSelection : SelectionDragTracker::NewSelection ));
 }
 
 void DiagramEditPart::paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context)

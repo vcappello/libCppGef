@@ -74,12 +74,15 @@ public:
 	virtual shared_ptr< ICommand > createSetDashStyleCommand(const std::vector< double > dash_style, double dash_offset);	
 	virtual shared_ptr< ICommand > createDeleteCommand();
 	
-	bool selectFromPoint(const Point& point);
-	bool selectFromRectangle(const Rectangle& rectangle);
+	virtual bool selectFromPoint(const Point& point);
+	virtual bool selectFromRectangle(const Rectangle& rectangle);
+
+	virtual bool toggleSelectionFromPoint(const Point& point);
+	virtual bool toggleSelectionFromRectangle(const Rectangle& rectangle);
 	
 	bool queryStartMove(const Point& point);
 	
-	shared_ptr< IDragTracker > queryDragTracker(const Point& point);
+	shared_ptr< IDragTracker > queryDragTracker(const Point& point, const KeyModifier& key_modifier);
 	void paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context);
 	
 	virtual shared_ptr< IInplaceEditor > queryInplaceEditor(const Point& point);

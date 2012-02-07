@@ -12,6 +12,7 @@
 #include <i_command.h>
 #include <i_inplace_editor.h>
 #include <color.h>
+#include <key_modifier.h>
 
 using boost::shared_ptr;
 
@@ -98,10 +99,13 @@ public:
 	
 	virtual bool selectFromPoint(const Point& point) = 0;
 	virtual bool selectFromRectangle(const Rectangle& rectangle) = 0;
-	
+
+	virtual bool toggleSelectionFromPoint(const Point& point) = 0;
+	virtual bool toggleSelectionFromRectangle(const Rectangle& rectangle) = 0;
+
 	virtual bool queryStartMove(const Point& point) = 0;
 	
-	virtual shared_ptr< IDragTracker > queryDragTracker(const Point& point) = 0;
+	virtual shared_ptr< IDragTracker > queryDragTracker(const Point& point, const KeyModifier& key_modifier) = 0;
 	virtual void paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context) = 0;
 	
 	virtual shared_ptr< IInplaceEditor > queryInplaceEditor(const Point& point) = 0;

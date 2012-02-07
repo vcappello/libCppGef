@@ -246,6 +246,30 @@ bool ShapeEditPart::selectFromRectangle(const Rectangle& rectangle)
 	return false;
 }
 
+bool  ShapeEditPart::toggleSelectionFromPoint(const Point& point)
+{
+	bool selected = isSelected();
+
+	if (getFigure()->isPointIn (point))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
+bool  ShapeEditPart::toggleSelectionFromRectangle(const Rectangle& rectangle)
+{
+	bool selected = isSelected();
+
+	if (getFigure()->isBoundsOut (rectangle))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
 bool ShapeEditPart::queryStartMove(const Point& point)
 {
 	return getFigure()->isPointIn (point);
@@ -263,7 +287,7 @@ void ShapeEditPart::paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > co
 	resize_left_figure_->paint (context);
 }
 
-shared_ptr< IDragTracker > ShapeEditPart::queryDragTracker(const Point& point)
+shared_ptr< IDragTracker > ShapeEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
 	if (resize_top_left_figure_->getBounds().contains (point))
 		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(

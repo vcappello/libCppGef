@@ -8,6 +8,7 @@
 
 #include <rectangle.h>
 #include <idragtracker.h>
+#include <key_modifier.h>
 
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;

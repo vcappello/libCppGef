@@ -3,8 +3,9 @@
 namespace cppgef
 {
 
-SelectionDragTracker::SelectionDragTracker(shared_ptr< DiagramEditPart > diagram_edit_part) :
+SelectionDragTracker::SelectionDragTracker(shared_ptr< DiagramEditPart > diagram_edit_part, SelectionActionType selection_action_type) :
 	diagram_edit_part_( diagram_edit_part ),
+	selection_action_type_( selection_action_type ),
 	dragging_( false ),
 	selection_border_color_( "DarkBlue" ),
 	selection_border_color_alpha_(0.5),
@@ -38,12 +39,16 @@ void SelectionDragTracker::dragComplete(const Point& point)
 {
 	if (selected_rect_.getSize().isEmpty())
 	{
-		diagram_edit_part_->clearSelection();
+		if (selection_action_type_ == NewSelection)
+			diagram_edit_part_->clearSelection();
+
 		diagram_edit_part_->selectFromPoint (point);
 	}
 	else
 	{
-		diagram_edit_part_->clearSelection();
+		if (selection_action_type_ == NewSelection)
+			diagram_edit_part_->clearSelection();
+
 		diagram_edit_part_->selectFromRectangle (selected_rect_);
 	}
 	

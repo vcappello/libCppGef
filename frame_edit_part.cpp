@@ -546,6 +546,44 @@ bool FrameEditPart::selectFromRectangle(const Rectangle& rectangle)
 	return res;
 }
 
+bool FrameEditPart::toggleSelectionFromPoint(const Point& point)
+{
+	for (reverse_iterator itor = children_.rbegin();
+		itor != children_.rend();
+		itor++)
+	{
+		if ((*itor)->toggleSelectionFromPoint (point))
+			return true;
+	}
+
+	bool selected = isSelected();
+
+	if (figure_->getBackgroundFigure()->isPointIn (point))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
+bool FrameEditPart::toggleSelectionFromRectangle(const Rectangle& rectangle)
+{
+	bool res = false;
+	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, children_)
+	{
+		res |= edit_part->toggleSelectionFromRectangle (rectangle);
+	}
+
+	bool selected = isSelected();
+
+	if (figure_->getBackgroundFigure()->isBoundsOut (rectangle))
+	{
+		setSelected (!isSelected());
+	}
+
+	return res || (isSelected() != selected);
+}
+
 bool FrameEditPart::queryStartMove(const Point& point)
 {
 	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, children_)
@@ -559,12 +597,12 @@ bool FrameEditPart::queryStartMove(const Point& point)
 	return figure_->getBackgroundFigure()->isPointIn (point);
 }
 
-shared_ptr< IDragTracker > FrameEditPart::queryDragTracker(const Point& point)
+shared_ptr< IDragTracker > FrameEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
 	// 1. point is on a selected child drag tacker
 	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, selected_children_)
 	{
-		shared_ptr< IDragTracker > drag_tracker = edit_part->queryDragTracker (point);
+		shared_ptr< IDragTracker > drag_tracker = edit_part->queryDragTracker (point, key_modifier);
 		
 		if (drag_tracker)
 		{
@@ -593,7 +631,8 @@ shared_ptr< IDragTracker > FrameEditPart::queryDragTracker(const Point& point)
 		{
 			shared_ptr< DiagramEditPart > diagram_edit_part = DiagramEditPart::queryDiagramFromChild(shared_from_this());
 			
-			diagram_edit_part->clearSelection();
+			if (!key_modifier.isShift())
+				diagram_edit_part->clearSelection();
 
 			// Use selectFromPoint because the selected item can be a child of a child
 			(*itor)->selectFromPoint (point);

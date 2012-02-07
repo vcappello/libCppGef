@@ -68,7 +68,7 @@ public:
 	
 	virtual void paintSelectedDragTrackers(Cairo::RefPtr<Cairo::Context> context);
 	
-	virtual shared_ptr<IDragTracker> queryDragTracker(const Point& point);
+	virtual shared_ptr<IDragTracker> queryDragTracker(const Point& point, const KeyModifier& key_modifier);
 	virtual shared_ptr< IInplaceEditor > queryInplaceEditor(const Point& point);
 	
 	virtual bool queryStartMove(const Point& point);
@@ -76,6 +76,9 @@ public:
 	virtual bool selectFromPoint(const Point& point);
 	virtual bool selectFromRectangle(const Rectangle& rectangle);
 	
+	virtual bool toggleSelectionFromPoint(const Point& point);
+	virtual bool toggleSelectionFromRectangle(const Rectangle& rectangle);
+
 	void drawControlLine(Cairo::RefPtr<Cairo::Context> context, const Point& start_point, const Point& end_point);
 	
 	virtual signal_selection_change_t signalSelectionAdd();

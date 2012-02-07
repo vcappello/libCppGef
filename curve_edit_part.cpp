@@ -190,6 +190,30 @@ bool CurveEditPart::selectFromRectangle(const Rectangle& rectangle)
 	return false;	
 }
 
+bool CurveEditPart::toggleSelectionFromPoint(const Point& point)
+{
+	bool selected = isSelected();
+
+	if (curve_figure_->isPointIn (point))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
+bool CurveEditPart::toggleSelectionFromRectangle(const Rectangle& rectangle)
+{
+	bool selected = isSelected();
+
+	if (curve_figure_->isBoundsOut (rectangle))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
 void CurveEditPart::drawControlLine(Cairo::RefPtr<Cairo::Context> context, const Point& start_point, const Point& end_point)
 {
 	context->begin_new_path();
@@ -230,7 +254,7 @@ void CurveEditPart::paintSelectedDragTrackers(Cairo::RefPtr<Cairo::Context> cont
 	drawControlLine (context, curve_figure_->getEndPoint(), curve_figure_->getEndControlPoint());
 }
 
-shared_ptr<IDragTracker> CurveEditPart::queryDragTracker(const Point& point)
+shared_ptr<IDragTracker> CurveEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
 	if (move_start_point_figure_->getBounds().contains (point))
 		return shared_ptr< MovePointDragTracker >(new MovePointDragTracker(

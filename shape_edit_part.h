@@ -46,13 +46,16 @@ public:
 	bool isResizeSupported() const;
 	bool isMovePointSupported() const;
 	
-	bool selectFromPoint(const Point& point);
-	bool selectFromRectangle(const Rectangle& rectangle);
+	virtual bool selectFromPoint(const Point& point);
+	virtual bool selectFromRectangle(const Rectangle& rectangle);
 	
+	virtual bool toggleSelectionFromPoint(const Point& point);
+	virtual bool toggleSelectionFromRectangle(const Rectangle& rectangle);
+
 	bool queryStartMove(const Point& point);
 	
 	void paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context);
-	shared_ptr< IDragTracker > queryDragTracker(const Point& point);
+	shared_ptr< IDragTracker > queryDragTracker(const Point& point, const KeyModifier& key_modifier);
 	
 	shared_ptr< IContainerEditPart > findInnerContainer(const Point& point);
 	

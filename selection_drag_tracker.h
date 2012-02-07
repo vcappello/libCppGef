@@ -13,7 +13,14 @@ namespace cppgef
 class SelectionDragTracker : public cppgef::IDragTracker
 {
 public:
-	SelectionDragTracker(shared_ptr< DiagramEditPart > diagram_edit_part);
+	enum SelectionActionType
+	{
+		AddToSelection,
+		NewSelection
+	};
+
+public:
+	SelectionDragTracker(shared_ptr< DiagramEditPart > diagram_edit_part, SelectionActionType selection_action_type);
 	virtual ~SelectionDragTracker();
 
 public:
@@ -25,6 +32,7 @@ public:
 	
 protected:
 	shared_ptr< DiagramEditPart > diagram_edit_part_;
+	SelectionActionType selection_action_type_;
 	bool dragging_;
 	Rectangle selected_rect_;
 	Gdk::Color selection_border_color_;

@@ -28,8 +28,10 @@ bool SelectionTool::buttonPress(GdkEventButton* event, IDiagramEditor* diagram_e
 		// Single-click start drag tracker action
 		Point point(event->x, event->y);
 		
-		drag_tracker_ = diagram_edit_part_->queryDragTracker (point);
-		drag_tracker_->dragBegin (point);
+		drag_tracker_ = diagram_edit_part_->queryDragTracker (point, KeyModifier( (GdkModifierType)(event->state) ));
+
+		if (drag_tracker_)
+			drag_tracker_->dragBegin (point);
 	}
 	else if (event->type == GDK_2BUTTON_PRESS)
 	{

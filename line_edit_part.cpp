@@ -187,13 +187,37 @@ bool LineEditPart::queryStartMove(const Point& point)
 	return false;	
 }
 
+bool LineEditPart::toggleSelectionFromPoint(const Point& point)
+{
+	bool selected = isSelected();
+
+	if (simple_line_figure_->isPointIn (point))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
+bool LineEditPart::toggleSelectionFromRectangle(const Rectangle& rectangle)
+{
+	bool selected = isSelected();
+
+	if (simple_line_figure_->isBoundsOut (rectangle))
+	{
+		setSelected (!isSelected());
+	}
+
+	return isSelected() != selected;
+}
+
 void LineEditPart::paintSelectedDragTrackers(Cairo::RefPtr<Cairo::Context> context)
 {
 	move_start_point_figure_->paint (context);
 	move_end_point_figure_->paint (context);
 }
 
-shared_ptr<IDragTracker> LineEditPart::queryDragTracker(const Point& point)
+shared_ptr<IDragTracker> LineEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
 	if (move_start_point_figure_->getBounds().contains (point))
 		return shared_ptr< MovePointDragTracker >(new MovePointDragTracker(

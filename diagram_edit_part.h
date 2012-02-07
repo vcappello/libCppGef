@@ -131,7 +131,7 @@ public:
 	 * 
 	 * @return true if an object was found
 	 */
-	bool selectFromPoint(const Point& point);
+	virtual bool selectFromPoint(const Point& point);
 	
 	/**
 	 * @brief Add all objects contained in the given rectangle to the selection
@@ -142,7 +142,10 @@ public:
 	 * 
 	 * @return true if at least one object was found
 	 */
-	bool selectFromRectangle(const Rectangle& rectangle);
+	virtual bool selectFromRectangle(const Rectangle& rectangle);
+
+	virtual bool toggleSelectionFromPoint(const Point& point);
+	virtual bool toggleSelectionFromRectangle(const Rectangle& rectangle);
 
 	/**
 	 * @brief Remove all objects from selection
@@ -160,7 +163,7 @@ public:
 	 */
 	bool queryStartMove(const Point& point);
 	
-	shared_ptr< IDragTracker > queryDragTracker(const Point& point);
+	shared_ptr< IDragTracker > queryDragTracker(const Point& point, const KeyModifier& key_modifier);
 	void paintSelectedDragTrackers(Cairo::RefPtr< Cairo::Context > context);
 	
 	virtual shared_ptr< IInplaceEditor > queryInplaceEditor(const Point& point);
