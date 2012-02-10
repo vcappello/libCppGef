@@ -1,8 +1,11 @@
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
 #include "rectangle.h"
 
 #include <boost/serialization/nvp.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 
 template 
 void cppgef::Rectangle::serialize( 
@@ -16,6 +19,17 @@ void cppgef::Rectangle::serialize(
     const unsigned int /* file_version */ 
 ); 
 
+template
+void cppgef::Rectangle::serialize(
+    boost::archive::xml_oarchive &ar,
+    const unsigned int /* file_version */
+);
+
+template
+void cppgef::Rectangle::serialize(
+    boost::archive::xml_iarchive &ar,
+    const unsigned int /* file_version */
+);
 
 namespace cppgef
 {

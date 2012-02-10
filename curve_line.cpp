@@ -1,5 +1,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/extended_type_info.hpp>
@@ -13,6 +15,30 @@
 // does not work on linux for this class
 BOOST_CLASS_EXPORT(cppgef::LineBase)
 BOOST_CLASS_EXPORT(cppgef::CurveLine)
+
+template
+void cppgef::CurveLine::serialize(
+    boost::archive::text_oarchive &ar,
+    const unsigned int /* file_version */
+);
+
+template
+void cppgef::CurveLine::serialize(
+    boost::archive::text_iarchive &ar,
+    const unsigned int /* file_version */
+);
+
+template
+void cppgef::CurveLine::serialize(
+    boost::archive::xml_oarchive &ar,
+    const unsigned int /* file_version */
+);
+
+template
+void cppgef::CurveLine::serialize(
+    boost::archive::xml_iarchive &ar,
+    const unsigned int /* file_version */
+);
 
 namespace cppgef
 {

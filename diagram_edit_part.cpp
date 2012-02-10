@@ -5,6 +5,8 @@
 #include <fstream>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 #include <glibmm/i18n.h>
 
@@ -150,9 +152,9 @@ bool DiagramEditPart::open(const std::string& file_name)
 	
 	if (ifs.good())
 	{
-		boost::archive::text_iarchive ia(ifs);
+		boost::archive::xml_iarchive ia(ifs);
 		Diagram* diagram = new Diagram();
-		ia >> *diagram;
+		ia >> boost::serialization::make_nvp ("Diagram", *diagram);
 
 		setModel (shared_ptr< Diagram >( diagram ));
 

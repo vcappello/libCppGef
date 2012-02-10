@@ -5,6 +5,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/array.hpp> 
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/nvp.hpp>
 
 #include <glibmm/ustring.h>
 
@@ -26,7 +27,7 @@ inline void save(
     const unsigned int /* file_version */
 )
 {
-	ar << t.raw();
+	ar << boost::serialization::make_nvp("ustring", t.raw());
 }
 
 template< class Archive >
@@ -37,7 +38,7 @@ inline void load(
 )
 {
 	std::string buffer;
-	ar >> buffer;
+	ar >> boost::serialization::make_nvp("ustring", buffer);
 	
 	t = buffer;
 }

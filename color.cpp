@@ -5,11 +5,14 @@
  *      Author: vincenzo
  */
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
 #include "color.h"
 
 #include <boost/serialization/nvp.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 
 #include <sstream>
 
@@ -18,6 +21,12 @@ void cppgef::Color::save(boost::archive::text_oarchive& ar, const unsigned int v
 
 template
 void  cppgef::Color::load(boost::archive::text_iarchive& ar, const unsigned int version);
+
+template
+void cppgef::Color::save(boost::archive::xml_oarchive& ar, const unsigned int version) const;
+
+template
+void  cppgef::Color::load(boost::archive::xml_iarchive& ar, const unsigned int version);
 
 const double MAX_CHANNEL_VALUE = 65535;
 

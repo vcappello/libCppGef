@@ -7,6 +7,8 @@
 
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
 
 namespace cppgef
 {
@@ -37,8 +39,8 @@ bool SaveDiagramCommand::execute()
 	
 	if (ofs.good())
 	{
-		boost::archive::text_oarchive oa(ofs);
-		oa << *diagram_;
+		boost::archive::xml_oarchive oa(ofs);
+		oa << boost::serialization::make_nvp ("Diagram", *diagram_);
 		
 		CommandManager::getInstance()->setSaveBookmark (diagram_);
 
