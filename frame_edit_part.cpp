@@ -218,7 +218,7 @@ shared_ptr< Figure > FrameEditPart::createFigure()
 	label_figure->setText (frame_->getTitle());
 	
 	group_figure->addChild (label_figure, 
-		shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, 16, 6, 6, 6, 6)));
+		shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, 24, 6, 6, 6, 6)));
 
 	// Line title separator - Index 1
 	shared_ptr< LineFigure > line_figure( new LineFigure() );

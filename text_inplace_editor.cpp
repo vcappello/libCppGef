@@ -65,6 +65,9 @@ Gtk::Widget* TextInplaceEditor::createWidget()
 	buffer->signal_remove_tag().connect(
 		sigc::mem_fun(this, &TextInplaceEditor::onTextBufferRemoveTag));
 	
+	widget_->signal_key_press_event().connect(
+			sigc::mem_fun(this, &TextInplaceEditor::onWidgetKeyPressEvent), true);
+
 	return widget_;
 }
 
@@ -217,6 +220,11 @@ void TextInplaceEditor::setTextBackColorNone()
 IInplaceEditor::signal_stop_edit_t TextInplaceEditor::signalStopEdit()
 {
 	return signal_stop_edit_;
+}
+
+IInplaceEditor::signal_cancel_edit_t TextInplaceEditor::signalCancelEdit()
+{
+	return signal_cancel_edit_;
 }
 
 TextInplaceEditor::signal_update_style_t TextInplaceEditor::signalUpdateStyle()
@@ -556,6 +564,16 @@ void TextInplaceEditor::onTextBufferRemoveTag(const Glib::RefPtr< Gtk::TextBuffe
 				tag->property_name(),
 				range_begin.get_offset(),
 				range_end.get_offset() )));	
+}
+
+bool TextInplaceEditor::onWidgetKeyPressEvent(GdkEventKey* event)
+{
+	if (event->keyval == GDK_KEY_Escape)
+	{
+		signal_cancel_edit_.emit();
+	}
+
+	return false;
 }
 
 }

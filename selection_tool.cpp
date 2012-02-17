@@ -1,5 +1,8 @@
 #include "selection_tool.h"
 
+#include <command_manager.h>
+#include <settings.h>
+
 namespace cppgef
 {
 
@@ -21,84 +24,158 @@ void SelectionTool::setDiagramEditPart(shared_ptr<DiagramEditPart> value)
 	diagram_edit_part_ = value;
 }
 
-bool SelectionTool::buttonPress(GdkEventButton* event, IDiagramEditor* diagram_editor)
+bool SelectionTool::buttonPress(GdkEventButton* event,
+		IDiagramEditor* diagram_editor)
 {
 	if ((event->type == GDK_BUTTON_PRESS) && (event->button == 1))
 	{
 		// Single-click start drag tracker action
 		Point point(event->x, event->y);
-		
-		drag_tracker_ = diagram_edit_part_->queryDragTracker (point, KeyModifier( (GdkModifierType)(event->state) ));
+
+		drag_tracker_ = diagram_edit_part_->queryDragTracker(point,
+				KeyModifier((GdkModifierType) (event->state)));
 
 		if (drag_tracker_)
-			drag_tracker_->dragBegin (point);
+			drag_tracker_->dragBegin(point);
 	}
 	else if (event->type == GDK_2BUTTON_PRESS)
 	{
 		// Double-click activate inplace editor
 		Point point(event->x, event->y);
-		
-		shared_ptr< IInplaceEditor > editor = diagram_edit_part_->queryInplaceEditor (point);
+
+		shared_ptr<IInplaceEditor> editor =
+				diagram_edit_part_->queryInplaceEditor(point);
 		if (editor)
 		{
-			diagram_editor->activateInplaceEditor (editor, point);
+			diagram_editor->activateInplaceEditor(editor, point);
 		}
 	}
-	
+
 	return true;
 }
 
-bool SelectionTool::motionNotify(GdkEventMotion* event, IDiagramEditor* diagram_editor)
+bool SelectionTool::motionNotify(GdkEventMotion* event,
+		IDiagramEditor* diagram_editor)
 {
 	if (drag_tracker_)
 	{
-		int x,y;
+		int x, y;
 		GdkModifierType state;
 
-		if (event->is_hint) 
+		if (event->is_hint)
 		{
 			gdk_window_get_pointer(event->window, &x, &y, &state);
-		} 
-		else 
+		}
+		else
 		{
 			x = event->x;
 			y = event->y;
-			state = static_cast< GdkModifierType >(event->state);
-		} 
+			state = static_cast<GdkModifierType>(event->state);
+		}
 
-		if (state & GDK_BUTTON1_MASK) 
+		if (state & GDK_BUTTON1_MASK)
 		{
 			Point point(event->x, event->y);
-			drag_tracker_->dragTo (point);
+			drag_tracker_->dragTo(point);
 		}
 	}
-	
+
 	return true;
 }
 
-bool SelectionTool::buttonRelease(GdkEventButton* event, IDiagramEditor* diagram_editor)
+bool SelectionTool::buttonRelease(GdkEventButton* event,
+		IDiagramEditor* diagram_editor)
 {
 	if ((event->type == GDK_BUTTON_RELEASE) && (event->button == 1))
 	{
 		if (drag_tracker_)
 		{
 			Point point(event->x, event->y);
-			
-			drag_tracker_->dragComplete (point);
-			
+
+			drag_tracker_->dragComplete(point);
+
 			drag_tracker_.reset();
 		}
 	}
-	
+
 	return true;
 }
 
 bool SelectionTool::keyPress(GdkEventKey* event, IDiagramEditor* diagram_editor)
 {
+	switch (event->keyval)
+	{
+	case GDK_KEY_Up:
+	{
+		int increment;
+		if (event->state & GDK_SHIFT_MASK)
+			increment = Settings::getInstance()->getMoveBigIncrement();
+		else
+			increment = Settings::getInstance()->getMoveSmallIncrement();
+
+		shared_ptr<ICommand> cmd = diagram_edit_part_->createMoveCommand(0, -increment);
+		if (cmd)
+		{
+			CommandManager::getInstance()->execute(cmd);
+			return true;
+		}
+		break;
+	}
+	case GDK_KEY_Down:
+	{
+		int increment;
+		if (event->state & GDK_SHIFT_MASK)
+			increment = Settings::getInstance()->getMoveBigIncrement();
+		else
+			increment = Settings::getInstance()->getMoveSmallIncrement();
+
+		shared_ptr<ICommand> cmd = diagram_edit_part_->createMoveCommand(0, increment);
+		if (cmd)
+		{
+			CommandManager::getInstance()->execute(cmd);
+			return true;
+		}
+		break;
+	}
+	case GDK_KEY_Left:
+	{
+		int increment;
+		if (event->state & GDK_SHIFT_MASK)
+			increment = Settings::getInstance()->getMoveBigIncrement();
+		else
+			increment = Settings::getInstance()->getMoveSmallIncrement();
+
+		shared_ptr<ICommand> cmd = diagram_edit_part_->createMoveCommand(-increment, 0);
+		if (cmd)
+		{
+			CommandManager::getInstance()->execute(cmd);
+			return true;
+		}
+		break;
+	}
+	case GDK_KEY_Right:
+	{
+		int increment;
+		if (event->state & GDK_SHIFT_MASK)
+			increment = Settings::getInstance()->getMoveBigIncrement();
+		else
+			increment = Settings::getInstance()->getMoveSmallIncrement();
+
+		shared_ptr<ICommand> cmd = diagram_edit_part_->createMoveCommand(increment, 0);
+		if (cmd)
+		{
+			CommandManager::getInstance()->execute(cmd);
+			return true;
+		}
+		break;
+	}
+	}
+
 	return false;
 }
 
-bool SelectionTool::keyRelease(GdkEventKey* event, IDiagramEditor* diagram_editor)
+bool SelectionTool::keyRelease(GdkEventKey* event,
+		IDiagramEditor* diagram_editor)
 {
 	if (event->keyval == GDK_KEY_Escape)
 	{
@@ -115,9 +192,9 @@ bool SelectionTool::keyRelease(GdkEventKey* event, IDiagramEditor* diagram_edito
 bool SelectionTool::draw(Cairo::RefPtr<Cairo::Context> context)
 {
 	if (drag_tracker_)
-		drag_tracker_->paint (context);
+		drag_tracker_->paint(context);
 	else if (diagram_edit_part_->getSelectedChildrenSize() > 0)
-		diagram_edit_part_->paintSelectedDragTrackers (context);
+		diagram_edit_part_->paintSelectedDragTrackers(context);
 
 	return true;
 }
@@ -125,10 +202,10 @@ bool SelectionTool::draw(Cairo::RefPtr<Cairo::Context> context)
 bool SelectionTool::expose(GdkEventExpose* event, Cairo::RefPtr<Cairo::Context> context)
 {
 	if (drag_tracker_)
-		drag_tracker_->paint (context);
+	drag_tracker_->paint (context);
 	else if (diagram_edit_part_->getSelectedChildrenSize() > 0)
-		diagram_edit_part_->paintSelectedDragTrackers (context);
-		
+	diagram_edit_part_->paintSelectedDragTrackers (context);
+
 	return true;
 }
 #endif

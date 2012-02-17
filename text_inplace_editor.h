@@ -76,6 +76,7 @@ public:
 	void setCursorPosition(const Point& point);
 	
 	virtual signal_stop_edit_t signalStopEdit();
+	virtual signal_cancel_edit_t signalCancelEdit();
 	
 	signal_update_style_t signalUpdateStyle();
 	
@@ -88,6 +89,7 @@ protected:
 	TextEventStack text_event_stack_;
 
 	signal_update_style_t signal_update_style_;
+	signal_cancel_edit_t signal_cancel_edit_;
 	signal_stop_edit_t signal_stop_edit_;
 	
 protected:
@@ -100,6 +102,7 @@ protected:
 	void onTextBufferErase(const Gtk::TextBuffer::iterator& start, const Gtk::TextBuffer::iterator& end);
 	void onTextBufferApplyTag(const Glib::RefPtr< Gtk::TextBuffer::Tag >& tag, const Gtk::TextBuffer::iterator& range_begin, const Gtk::TextBuffer::iterator& range_end);
 	void onTextBufferRemoveTag(const Glib::RefPtr< Gtk::TextBuffer::Tag >& tag, const Gtk::TextBuffer::iterator& range_begin, const Gtk::TextBuffer::iterator& range_end);
+	bool onWidgetKeyPressEvent(GdkEventKey* event);
 };
 
 }

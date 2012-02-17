@@ -109,5 +109,15 @@ void Settings::setTextHasBackgroundColor(bool value)
 	text_has_background_color_ = value;
 }
 
+int Settings::getMoveSmallIncrement() const
+{
+	return 1;
+}
+
+int Settings::getMoveBigIncrement() const
+{
+	return 10;
+}
+
 }
 

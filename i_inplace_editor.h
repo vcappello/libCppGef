@@ -12,6 +12,7 @@ class IInplaceEditor
 {
 public:
 	typedef sigc::signal< void > signal_stop_edit_t;
+	typedef sigc::signal< void > signal_cancel_edit_t;
 	
 public:
 	IInplaceEditor()
@@ -36,6 +37,8 @@ public:
 	virtual void executePaste() = 0;
 	
 	virtual signal_stop_edit_t signalStopEdit() = 0;
+	virtual signal_cancel_edit_t signalCancelEdit() = 0;
+
 };
 
 }

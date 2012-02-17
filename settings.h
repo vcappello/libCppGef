@@ -42,6 +42,9 @@ public:
 	bool getTextHasBackgroundColor() const;
 	void setTextHasBackgroundColor(bool value);
 	
+	int getMoveSmallIncrement() const;
+	int getMoveBigIncrement() const;
+
 protected:	
 	Color line_color_;
 	double line_width_;
