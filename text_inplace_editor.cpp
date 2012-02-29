@@ -66,7 +66,7 @@ Gtk::Widget* TextInplaceEditor::createWidget()
 		sigc::mem_fun(this, &TextInplaceEditor::onTextBufferRemoveTag));
 	
 	widget_->signal_key_press_event().connect(
-			sigc::mem_fun(this, &TextInplaceEditor::onWidgetKeyPressEvent), true);
+			sigc::mem_fun(this, &TextInplaceEditor::onWidgetKeyPressEvent), false);
 
 	return widget_;
 }
@@ -568,9 +568,24 @@ void TextInplaceEditor::onTextBufferRemoveTag(const Glib::RefPtr< Gtk::TextBuffe
 
 bool TextInplaceEditor::onWidgetKeyPressEvent(GdkEventKey* event)
 {
-	if (event->keyval == GDK_KEY_Escape)
+	switch (event->keyval)
 	{
-		signal_cancel_edit_.emit();
+		case GDK_KEY_Escape:
+		{
+			signal_cancel_edit_.emit();
+			return true;
+			break;
+		}
+		case GDK_KEY_Return:
+		case GDK_KEY_KP_Enter:
+		{
+			if (!(event->state & GDK_MOD1_MASK))
+			{
+				signal_stop_edit_.emit();
+				return true;
+			}
+			break;
+		}
 	}
 
 	return false;
