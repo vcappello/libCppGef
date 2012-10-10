@@ -898,7 +898,25 @@ void FrameEditPart::addChild(shared_ptr< ModelElementBase > element)
 
 	shared_ptr< GroupFigure > client_figure = dynamic_pointer_cast< GroupFigure >(getClientFigure());
 	
-	int index = frame_->getChildIndex (element);
+	// Get index from model element
+	int index = -1;
+
+	if (!children_.empty())
+	{
+		int element_index = frame_->getChildIndex (element);
+		index = 0;
+		// Search for a child edit part relative to a model element
+		// with the index less than the index of given model element
+		for (int i = children_.size() - 1; i >= 0; i--)
+		{
+			if (frame_->getChildIndex (children_[i]->getModel()) < element_index)
+			{
+				index = i + 1;
+				break;
+			}
+		}
+
+	}
 
 	if (index == -1 || index >= children_.size())
 	{
@@ -910,8 +928,6 @@ void FrameEditPart::addChild(shared_ptr< ModelElementBase > element)
 	}
 	else
 	{
-		// TODO: Assume that the index of the model element is equal
-		// to the index of the controller
 		shared_ptr< IEditPart > old_child_at_pos = children_[index];
 		
 		children_.insert (children_.begin() + index, edit_part);

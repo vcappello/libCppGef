@@ -726,7 +726,25 @@ void DiagramEditPart::addChild(shared_ptr< ModelElementBase > element)
 		
 	edit_part->setParent (shared_from_this());
 	
-	int index = diagram_->getChildIndex (element);
+	// Get index from model element
+	int index = -1;
+
+	if (!children_.empty())
+	{
+		int element_index = diagram_->getChildIndex (element);
+		index = 0;
+		// Search for a child edit part relative to a model element
+		// with the index less than the index of given model element
+		for (int i = children_.size() - 1; i >= 0; i--)
+		{
+			if (diagram_->getChildIndex (children_[i]->getModel()) < element_index)
+			{
+				index = i + 1;
+				break;
+			}
+		}
+
+	}
 
 	// Test if the new element is to be added at the 
 	// end of the children list or in the middle of the list
@@ -740,8 +758,6 @@ void DiagramEditPart::addChild(shared_ptr< ModelElementBase > element)
 	}
 	else
 	{
-		// TODO: Assume that the index of the model element is equal
-		// to the index of the controller
 		shared_ptr< IEditPart > old_child_at_pos = children_[index];
 
 		children_.insert (children_.begin() + index, edit_part);
