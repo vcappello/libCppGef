@@ -12,8 +12,6 @@
 #include <boost/serialization/access.hpp>
 #include <sigc++/sigc++.h>
 
-#include <model_element_base.h>
-
 #include <string>
 
 #include <point.h>
@@ -24,10 +22,11 @@ using std::string;
 namespace cppgef
 {
 
-class EndPoint: public cppgef::ModelElementBase
+class EndPoint
 {
 public:
 	typedef string direction_t;
+	typedef sigc::signal< void > signal_property_changed_t;
 
 	static const char* DIRECTION_START;
 	static const char* DIRECTION_END;
@@ -36,10 +35,10 @@ public:
 	EndPoint();
 	virtual ~EndPoint();
 
-	const direction_t& GetDirection() const;
+	direction_t GetDirection() const;
 	void SetDirection(const direction_t& direction);
 
-	const shared_ptr<Point>& GetRefPoint() const;
+	shared_ptr<Point> GetRefPoint();
 	void SetRefPoint(const shared_ptr<Point>& ref_point);
 
 	signal_property_changed_t signalRefPointChanged();

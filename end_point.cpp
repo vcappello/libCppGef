@@ -59,7 +59,7 @@ EndPoint::~EndPoint()
 {
 }
 
-const EndPoint::direction_t& EndPoint::GetDirection() const
+EndPoint::direction_t EndPoint::GetDirection() const
 {
 	return direction_;
 }
@@ -70,7 +70,7 @@ void EndPoint::SetDirection(const direction_t& direction)
 	signal_direction_changed_.emit();
 }
 
-const shared_ptr<Point>& EndPoint::GetRefPoint() const
+shared_ptr<Point> EndPoint::GetRefPoint()
 {
 	return ref_point_;
 }
@@ -109,8 +109,6 @@ void EndPoint::onPositionChanged()
 template< class Archive >
 void EndPoint::serialize(Archive & ar, const unsigned int version)
 {
-	ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelElementBase);
-
 	ar & BOOST_SERIALIZATION_NVP(ref_point_);
 	ar & BOOST_SERIALIZATION_NVP(direction_);
 }

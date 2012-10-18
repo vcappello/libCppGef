@@ -8,6 +8,8 @@
 #ifndef DIRECT_RELATION_H_
 #define DIRECT_RELATION_H_
 
+#include <model_element_base.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <sigc++/sigc++.h>
