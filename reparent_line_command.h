@@ -29,7 +29,8 @@ protected:
 	shared_ptr< ComplexModelElementBase > old_parent_;
 	shared_ptr< ComplexModelElementBase > new_parent_;
 	int dx_;
-	int dy_;	
+	int dy_;
+	size_t index_;
 };
 
 }

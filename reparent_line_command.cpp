@@ -11,6 +11,7 @@ ReparentLineCommand::ReparentLineCommand(shared_ptr< Diagram > diagram, shared_p
 	dx_( dx ),
 	dy_( dy )
 {
+	index_ = old_parent_->getChildIndex (simple_line_);
 }
 
 ReparentLineCommand::~ReparentLineCommand()
@@ -41,7 +42,7 @@ bool ReparentLineCommand::execute()
 bool ReparentLineCommand::unexecute()
 {
 	new_parent_->eraseChild (simple_line_);
-	old_parent_->addChild (simple_line_);
+	old_parent_->insertChild (simple_line_, index_);
 	
 	simple_line_->getStartPoint().moveRel (-dx_, -dy_);
 	simple_line_->getEndPoint().moveRel (-dx_, -dy_);

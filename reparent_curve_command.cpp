@@ -11,6 +11,7 @@ ReparentCurveCommand::ReparentCurveCommand(shared_ptr< Diagram > diagram, shared
 	dx_( dx ),
 	dy_( dy )
 {
+	index_ = old_parent_->getChildIndex (curve_);
 }
 
 ReparentCurveCommand::~ReparentCurveCommand()
@@ -43,7 +44,7 @@ bool ReparentCurveCommand::execute()
 bool ReparentCurveCommand::unexecute()
 {
 	new_parent_->eraseChild (curve_);
-	old_parent_->addChild (curve_);
+	old_parent_->insertChild (curve_, index_);
 	
 	curve_->getStartPoint().moveRel (-dx_, -dy_);
 	curve_->getEndPoint().moveRel (-dx_, -dy_);

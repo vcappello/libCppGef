@@ -11,6 +11,7 @@ ReparentShapeCommand::ReparentShapeCommand(shared_ptr< Diagram > diagram, shared
 	dx_( dx ),
 	dy_( dy )
 {
+	index_ = old_parent_->getChildIndex (shape_);
 }
 
 ReparentShapeCommand::~ReparentShapeCommand()
@@ -40,7 +41,7 @@ bool ReparentShapeCommand::execute()
 bool ReparentShapeCommand::unexecute()
 {
 	new_parent_->eraseChild (shape_);
-	old_parent_->addChild (shape_);
+	old_parent_->insertChild (shape_, index_);
 	
 	shape_->getBounds().getLocation().moveRel (-dx_, -dy_);
 	

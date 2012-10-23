@@ -11,6 +11,7 @@ ReparentFrameCommand::ReparentFrameCommand(shared_ptr< Diagram > diagram, shared
 	dx_( dx ),
 	dy_( dy )
 {
+	index_ = old_parent_->getChildIndex (frame_);
 }
 
 ReparentFrameCommand::~ReparentFrameCommand()
