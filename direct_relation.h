@@ -15,13 +15,16 @@
 #include <sigc++/sigc++.h>
 
 #include <end_point.h>
+#include <line_base.h>
+#include <i_support_line_style.h>
 
 using boost::shared_ptr;
 
 namespace cppgef
 {
 
-class DirectRelation: public cppgef::ModelElementBase
+class DirectRelation: public cppgef::ModelElementBase,
+					  public cppgef::ISupportLineStyle
 {
 public:
 	DirectRelation();
@@ -33,25 +36,40 @@ public:
 	const shared_ptr<EndPoint>& GetStartPoint() const;
 	void SetStartPoint(const shared_ptr<EndPoint>& start_point);
 
+	const shared_ptr<LineBase>& GetLine() const;
+	void SetLine(const shared_ptr<LineBase>& line);
+
 	signal_property_changed_t signalStartPointChanged();
 	signal_property_changed_t signalEndPointChanged();
 	signal_property_changed_t signalStartPointPositionChanged();
 	signal_property_changed_t signalEndPointPositionChanged();
-
+	signal_property_changed_t signalLineColorChanged();
+	signal_property_changed_t signalLineWidthChanged();
+	signal_property_changed_t signalLineDashStyleChanged();
+	signal_property_changed_t signalLineDashStyleOffsetChanged();
 protected:
 	shared_ptr< EndPoint > start_point_;
 	shared_ptr< EndPoint > end_point_;
+	shared_ptr< LineBase > line_;
 
 	// Signal instances
 	signal_property_changed_t signal_start_point_changed_;
 	signal_property_changed_t signal_end_point_changed_;
 	signal_property_changed_t signal_start_point_position_changed_;
 	signal_property_changed_t signal_end_point_position_changed_;
+	signal_property_changed_t signal_line_color_changed_;
+	signal_property_changed_t signal_line_width_changed_;
+	signal_property_changed_t signal_line_dash_style_changed_;
+	signal_property_changed_t signal_line_dash_style_offset_changed_;
 
 protected:
 
 	void onStartPointPositionChanged();
 	void onEndPointPositionChanged();
+	void onLineColorChanged();
+	void onLineWidthChanged();
+	void onLineDashStyleChanged();
+	void onLineDashStyleOffsetChanged();
 
 private:
 	// Serialization

@@ -63,6 +63,8 @@ const shared_ptr<EndPoint>& DirectRelation::GetEndPoint() const
 void DirectRelation::SetEndPoint(const shared_ptr<EndPoint>& end_point)
 {
 	end_point_ = end_point;
+	line_->setEndPoint (*end_point->GetRefPoint());
+
 	signal_end_point_changed_.emit();
 
 	end_point_->signalPositionChanged().connect (
@@ -77,10 +79,34 @@ const shared_ptr<EndPoint>& DirectRelation::GetStartPoint() const
 void DirectRelation::SetStartPoint(const shared_ptr<EndPoint>& start_point)
 {
 	start_point_ = start_point;
+	line_->setStartPoint (*start_point->GetRefPoint());
+
 	signal_start_point_changed_.emit();
 
 	end_point_->signalPositionChanged().connect (
 			sigc::mem_fun( this, &DirectRelation::onStartPointPositionChanged ));
+}
+
+const shared_ptr<LineBase>& DirectRelation::GetLine() const
+{
+	return line_;
+}
+
+void DirectRelation::SetLine(const shared_ptr<LineBase>& line)
+{
+	line_ = line;
+
+	line_->signalLineColorChanged().connect(
+			sigc::mem_fun( this, &DirectRelation::onLineColorChanged ));
+
+	line_->signalLineWidthChanged().connect(
+			sigc::mem_fun( this, &DirectRelation::onLineWidthChanged ));
+
+	line_->signalLineDashStyleChanged().connect(
+			sigc::mem_fun( this, &DirectRelation::onLineDashStyleChanged ));
+
+	line_->signalLineDashStyleOffsetChanged().connect(
+			sigc::mem_fun( this, &DirectRelation::onLineDashStyleOffsetChanged ));
 }
 
 DirectRelation::signal_property_changed_t DirectRelation::signalStartPointChanged()
@@ -104,14 +130,54 @@ DirectRelation::signal_property_changed_t DirectRelation::signalEndPointPosition
 	return signal_end_point_position_changed_;
 }
 
-void DirectRelation::onStartPointPositionChanged()
+DirectRelation::signal_property_changed_t DirectRelation::signalLineColorChanged()
 {
-	signal_start_point_position_changed_.emit();
+	return signal_line_color_changed_;
+}
+
+DirectRelation::signal_property_changed_t DirectRelation::signalLineWidthChanged()
+{
+	return signal_line_width_changed_;
+}
+
+DirectRelation::signal_property_changed_t DirectRelation::signalLineDashStyleChanged()
+{
+	return signal_line_dash_style_changed_;
+}
+
+DirectRelation::signal_property_changed_t DirectRelation::signalLineDashStyleOffsetChanged()
+{
+	return signal_line_dash_style_offset_changed_;
 }
 
 void DirectRelation::onEndPointPositionChanged()
 {
 	signal_end_point_position_changed_.emit();
+}
+
+void DirectRelation::onStartPointPositionChanged()
+{
+	signal_start_point_position_changed_.emit();
+}
+
+void DirectRelation::onLineColorChanged()
+{
+	signal_line_color_changed_.emit();
+}
+
+void DirectRelation::onLineWidthChanged()
+{
+	signal_line_width_changed_.emit();
+}
+
+void DirectRelation::onLineDashStyleChanged()
+{
+	signal_line_dash_style_changed_.emit();
+}
+
+void DirectRelation::onLineDashStyleOffsetChanged()
+{
+	signal_line_dash_style_offset_changed_.emit();
 }
 
 template< class Archive >
@@ -121,6 +187,7 @@ void DirectRelation::serialize(Archive & ar, const unsigned int version)
 
 	ar & BOOST_SERIALIZATION_NVP(start_point_);
 	ar & BOOST_SERIALIZATION_NVP(end_point_);
+	ar & BOOST_SERIALIZATION_NVP(line_);
 }
 
 } /* namespace cppgef */
