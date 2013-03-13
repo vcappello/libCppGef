@@ -19,8 +19,12 @@ public:
 public:
 	void paint(Cairo::RefPtr<Cairo::Context> context);
 	void paintWithAlpha(double alpha);
+
+	double getRadius() const;
+	void setRadius(double radius);
 	
 protected:
+	double radius_;
 };
 
 }

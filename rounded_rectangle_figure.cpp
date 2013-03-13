@@ -3,7 +3,8 @@
 namespace cppgef
 {
 
-RoundedRectangleFigure::RoundedRectangleFigure()
+RoundedRectangleFigure::RoundedRectangleFigure() :
+	radius_( 5 )
 {
 }
 
@@ -19,9 +20,8 @@ void RoundedRectangleFigure::paint(Cairo::RefPtr<Cairo::Context> context)
 	double height = bounds_.getSize().getHeight();
 	
 	double aspect = 1.0;     // aspect ratio 
-	double corner_radius = 5; //height / 10.0;   // and corner curvature radius 
 
-	double radius = corner_radius / aspect;
+	double radius = radius_ / aspect;
 	double degrees = M_PI / 180.0;
 
 	context->begin_new_path();
@@ -52,6 +52,16 @@ void RoundedRectangleFigure::paintWithAlpha(double alpha)
 		new_fill_alpha = fill_style_->getColor().getA() - alpha;
 	
 	fill_style_->getColor().setA (new_fill_alpha);
+}
+
+double RoundedRectangleFigure::getRadius() const
+{
+	return radius_;
+}
+
+void RoundedRectangleFigure::setRadius(double radius)
+{
+	radius_ = radius;
 }
 
 }

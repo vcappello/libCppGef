@@ -232,10 +232,13 @@ shared_ptr< Figure > FrameEditPart::createFigure()
 	
 	// Client area - Index 2
 	shared_ptr< GroupFigure > client_figure( new GroupFigure() );
-	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new XYLayoutManager() ));
+//***
+//	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new XYLayoutManager() ));
+	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new VLayoutManager() ));
 
 	group_figure->addChild (client_figure, 
-		shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, VLayoutConstraint::VerticalFill, 0, 0, 0, 20)));
+		shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand,
+				VLayoutConstraint::VerticalFill, 0, 0, 0, 0)));
 
 	// Border
 	shared_ptr< RoundedRectangleFigure > background_figure( new RoundedRectangleFigure() );
@@ -599,6 +602,43 @@ bool FrameEditPart::queryStartMove(const Point& point)
 
 shared_ptr< IDragTracker > FrameEditPart::queryDragTracker(const Point& point, const KeyModifier& key_modifier)
 {
+
+	// 0. point is on a frame drag tacker
+	if (isSelected())
+	{
+		if (resize_top_left_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP_LEFT));
+
+		if (resize_top_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP));
+
+		if (resize_top_right_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP_RIGHT));
+
+		if (resize_right_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_RIGHT));
+
+		if (resize_bottom_right_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM_RIGHT));
+
+		if (resize_bottom_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM));
+
+		if (resize_bottom_left_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM_LEFT));
+
+		if (resize_left_figure_->getBounds().contains (point))
+			return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
+				shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_LEFT));
+	}
+
 	// 1. point is on a selected child drag tacker
 	BOOST_FOREACH(shared_ptr< IEditPart > edit_part, selected_children_)
 	{
@@ -641,40 +681,7 @@ shared_ptr< IDragTracker > FrameEditPart::queryDragTracker(const Point& point, c
 		}
 	}
 	
-	// 4. point is on a frame drag tacker
-	if (resize_top_left_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP_LEFT));
-		
-	if (resize_top_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-		shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP));
-
-	if (resize_top_right_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_TOP_RIGHT));
-
-	if (resize_right_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_RIGHT));
-
-	if (resize_bottom_right_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM_RIGHT));
-
-	if (resize_bottom_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM));
-
-	if (resize_bottom_left_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_BOTTOM_LEFT));
-
-	if (resize_left_figure_->getBounds().contains (point))
-		return shared_ptr< ResizeDragTracker >(new ResizeDragTracker(
-			shared_ptr< IContainerEditPart >(DiagramEditPart::queryDiagramFromChild(shared_from_this())), AbstractResizePolicy::RD_LEFT));
-	
-	// 5. 
+	// 4.
 	return shared_ptr< IDragTracker >();
 }
 
@@ -790,8 +797,9 @@ void FrameEditPart::setLayoutConstraint(shared_ptr< ModelElementBase > element, 
 		if ((*child_itor)->getModel() == element)
 		{
 			shared_ptr< GroupFigure > client_figure = dynamic_pointer_cast< GroupFigure >(getClientFigure());
-			shared_ptr< XYLayoutConstraint > xy_constraint = dynamic_pointer_cast< XYLayoutConstraint >(client_figure->getLayoutManager()->getChildConstraint((*child_itor)->getFigure()));
-			xy_constraint->setBounds (bounds);
+//***
+//			shared_ptr< XYLayoutConstraint > xy_constraint = dynamic_pointer_cast< XYLayoutConstraint >(client_figure->getLayoutManager()->getChildConstraint((*child_itor)->getFigure()));
+//			xy_constraint->setBounds (bounds);
 			client_figure->getLayoutManager()->applyConstraints (client_figure->getBounds());
 	
 			return;
@@ -918,13 +926,17 @@ void FrameEditPart::addChild(shared_ptr< ModelElementBase > element)
 
 	}
 
+	shared_ptr< ILayoutConstraint > layout_constraint;
+	layout_constraint = shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, 24, 0, 0, 0, 0) );
+//***
+//	layout_constraint = shared_ptr< ILayoutConstraint >( new XYLayoutConstraint(edit_part->getFigure()->getOutlineRect()) );
+
 	if (index == -1 || index >= children_.size())
 	{
 		children_.push_back (edit_part);
 
 		// Add the child view
-		client_figure->addChild (edit_part->getFigure(),
-			shared_ptr< ILayoutConstraint >( new XYLayoutConstraint(edit_part->getFigure()->getOutlineRect())));
+		client_figure->addChild (edit_part->getFigure(), layout_constraint);
 	}
 	else
 	{
@@ -934,9 +946,7 @@ void FrameEditPart::addChild(shared_ptr< ModelElementBase > element)
 
 		// Add the child view before the next view
 		int figure_index = client_figure->getChildIndex (old_child_at_pos->getFigure());
-		client_figure->insertChild (edit_part->getFigure(),
-			shared_ptr< ILayoutConstraint >( new XYLayoutConstraint(edit_part->getFigure()->getOutlineRect())),
-			figure_index);
+		client_figure->insertChild (edit_part->getFigure(), layout_constraint, figure_index);
 	}
 	
 	// TODO: implement applyConstraints() on Figure
