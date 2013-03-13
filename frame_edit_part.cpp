@@ -836,6 +836,9 @@ void FrameEditPart::onChildSelectionRemove(shared_ptr< IEditPart > edit_part)
 	if (itor != selected_children_.end())
 	{
 		selected_children_.erase (itor);
+
+//***
+		client_figure_->getLayoutManager()->applyConstraints (client_figure_->getBounds());
 	}
 }
 
