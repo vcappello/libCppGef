@@ -233,8 +233,8 @@ shared_ptr< Figure > FrameEditPart::createFigure()
 	// Client area - Index 2
 	shared_ptr< GroupFigure > client_figure( new GroupFigure() );
 //***
-//	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new XYLayoutManager() ));
-	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new VLayoutManager() ));
+	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new XYLayoutManager() ));
+//	client_figure->setLayoutManager (shared_ptr< ILayoutManager >( new VLayoutManager() ));
 
 	group_figure->addChild (client_figure, 
 		shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand,
@@ -798,8 +798,8 @@ void FrameEditPart::setLayoutConstraint(shared_ptr< ModelElementBase > element, 
 		{
 			shared_ptr< GroupFigure > client_figure = dynamic_pointer_cast< GroupFigure >(getClientFigure());
 //***
-//			shared_ptr< XYLayoutConstraint > xy_constraint = dynamic_pointer_cast< XYLayoutConstraint >(client_figure->getLayoutManager()->getChildConstraint((*child_itor)->getFigure()));
-//			xy_constraint->setBounds (bounds);
+			shared_ptr< XYLayoutConstraint > xy_constraint = dynamic_pointer_cast< XYLayoutConstraint >(client_figure->getLayoutManager()->getChildConstraint((*child_itor)->getFigure()));
+			xy_constraint->setBounds (bounds);
 			client_figure->getLayoutManager()->applyConstraints (client_figure->getBounds());
 	
 			return;
@@ -930,9 +930,9 @@ void FrameEditPart::addChild(shared_ptr< ModelElementBase > element)
 	}
 
 	shared_ptr< ILayoutConstraint > layout_constraint;
-	layout_constraint = shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, 24, 0, 0, 0, 0) );
 //***
-//	layout_constraint = shared_ptr< ILayoutConstraint >( new XYLayoutConstraint(edit_part->getFigure()->getOutlineRect()) );
+//	layout_constraint = shared_ptr< ILayoutConstraint >( new VLayoutConstraint(VLayoutConstraint::HorizontalExpand, 24, 0, 0, 0, 0) );
+	layout_constraint = shared_ptr< ILayoutConstraint >( new XYLayoutConstraint(edit_part->getFigure()->getOutlineRect()) );
 
 	if (index == -1 || index >= children_.size())
 	{

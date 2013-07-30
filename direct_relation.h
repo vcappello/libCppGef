@@ -47,6 +47,7 @@ public:
 	signal_property_changed_t signalLineWidthChanged();
 	signal_property_changed_t signalLineDashStyleChanged();
 	signal_property_changed_t signalLineDashStyleOffsetChanged();
+
 protected:
 	shared_ptr< EndPoint > start_point_;
 	shared_ptr< EndPoint > end_point_;
